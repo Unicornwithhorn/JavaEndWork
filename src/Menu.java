@@ -4,7 +4,7 @@ import java.util.Scanner;
 import java.util.Set;
 
 public class Menu {
-    public static void addResults(ArrayList<Laptop> laptops, HashMap<String, Set<String>> choosenParameters){
+    public static void addResults(ArrayList<Laptop> laptops, HashMap<String, Set<String>> choosenParameters, double minScreenSize, int currentMinPrice, int currentMinHardDiskSize, int currentMinRamMemoryInstalledSize, String currentBluetoothCondition){
         Scanner scanner = new Scanner(System.in);
         ArrayList<Laptop> choosenLaptops = new ArrayList<>();
         System.out.println("Удовлетворяющие вашему запросы ноутбуки:\n");
@@ -15,7 +15,12 @@ public class Menu {
                     && (choosenParameters.get("modelName").contains(laptop.describedParameters[1]) || choosenParameters.get("modelName").size() == 0)
                     &&(choosenParameters.get("color").contains(laptop.describedParameters[2]) || choosenParameters.get("color").size() == 0)
                     && (choosenParameters.get("CPUModel").contains(laptop.describedParameters[3]) || choosenParameters.get("CPUModel").size() == 0)
-                    && (choosenParameters.get("operatingSystem").contains(laptop.describedParameters[4]) || choosenParameters.get("operatingSystem").size() == 0)){
+                    && (choosenParameters.get("operatingSystem").contains(laptop.describedParameters[4]) || choosenParameters.get("operatingSystem").size() == 0)
+                    && minScreenSize<= laptop.screenSize
+                    && currentMinPrice<= laptop.price
+                    && currentMinHardDiskSize<= laptop.hardDiskSize
+                    && currentMinRamMemoryInstalledSize<= laptop.ramMemoryInstalledSize
+                    && (currentBluetoothCondition.equals(laptop.bluetooth) || currentBluetoothCondition.equals("Не имеет значения"))){
                 System.out.print(laptopNumber++ + ")");
                 System.out.println(laptop);
                 choosenLaptops.add(laptop);
@@ -108,7 +113,7 @@ public class Menu {
                     do {
                         if (answer.equals("1")) {
                             choosenParameters.get(typeParameter.type).remove(currentTypeMap.get(choice));
-                            System.out.println(typeParameter.russianNameSingle + "был удалён");
+                            System.out.println(typeParameter.russianNameSingle + " был удалён");
                             System.out.println("Выбранные вами " + typeParameter.russianNamePlural +
                                     " - " + choosenParameters.get(typeParameter.type));
                             System.out.println(menu);
@@ -116,7 +121,7 @@ public class Menu {
                                 flag = true;
                             }
                         } else if (answer.equals("2")) {
-                            System.out.println(typeParameter.russianNameSingle + "не был удалён");
+                            System.out.println(typeParameter.russianNameSingle + " не был удалён");
                             System.out.println("Выбранные вами " + typeParameter.russianNamePlural + " - "
                                     + choosenParameters.get(typeParameter.type));
                             System.out.println(menu);
@@ -147,11 +152,14 @@ public class Menu {
         String dimention = null;
         switch (typeParameter.type){
             case "screenSize": dimention = " дюйм";
+                break;
             case "price": dimention = " $";
-            case "hardDiskSize": dimention = " ГБ";
-            case "ramMemoryInstalledSize": dimention = " дюймов";
+                break;
+            case "hardDiskSize":
+            case "ramMemoryInstalledSize": dimention = " ГБ";
+                break;
         }
-        System.out.println("Введите минимальное значение для параметра" + typeParameter.russianNameSingle + "(" + dimention +")");
+        System.out.println("Введите минимальное значение для параметра " + typeParameter.russianNameSingle + " (" + dimention +"). Для выхода введите 0");
         boolean flag = true;
         while (flag) {
             try {
@@ -163,5 +171,27 @@ public class Menu {
             }
         }
         return 0;
+    }
+    public static String bluetoothChoice() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Доступные варианты\n" +
+                "1)bluetooth присутствует\n" +
+                "2)bluetooth отсутствует\n" +
+                "3)Не имеет значения\n" +
+                "\n");
+        String choice;
+        System.out.println("Выберите интересующий вас вариант");
+        while (true) {
+            choice = scanner.nextLine();
+            if (choice.equals("1")) {
+                return "bluetooth присутствует";
+            } else if (choice.equals("2")) {
+                return "bluetooth отсутствует";
+            } else if (choice.equals("3")) {
+                return "Не имеет значения";
+            } else {
+                System.out.println("Введённый ответ некорректен. Попробуйте ещё раз (1, 2 или 3");
+            }
+        }
     }
 }
